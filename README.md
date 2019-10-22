@@ -16,16 +16,18 @@ $ yarn install
 
 # Running
 
-Copy this template to Qlik Exxtensions Folder and visit http://localhost:4848/extensions/omnicanal/index.html to access the page. Then run:
+Copy this template to Qlik Extensions Folder. Then run:
 
 ```sh
 $ yarn dev
 ```
 
+Visit http://localhost:4848/extensions/omnicanal/index.html to access the page.
+
 # Components
 
 This project uses all new features from React 16.8+, incl. hooks like `useEffect`, `useState` and `context` to manage states.
-The main logic behind the scenes are located in `src/context/QlikContext.jsx'`. This file uses the `qlikLoader` to get the Qlik API from window and make it available to whole the application.
+The main logic behind the scenes is located in `src/context/QlikContext.jsx'`. This file uses the `qlikLoader` to get the Qlik API from window and make it available to all components in the application.
 
 In `src/components/Card` you can find an example using `getObject` to get an object from a Qlik App.
 
