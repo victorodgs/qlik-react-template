@@ -1,42 +1,55 @@
+const path = require ('path');
+const MiniCssExtractPlugin = require ('mini-css-extract-plugin');
 const webpack = require ('webpack');
-const ExtractTextPlugin = require ('extract-text-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: ['./src/index.js'],
   output: {
-    path: __dirname + '/public',
-    filename: './app.js',
+    filename: 'app.js',
+    path: path.resolve (__dirname, './public/'),
   },
-  devServer: {
-    port: 8080,
-    contentBase: './public',
-  },
-  resolve: {
-    extensions: ['', '.js', '.jsx'],
-    alias: {
-      modules: __dirname + '/node_modules',
-    },
-  },
-  plugins: [new ExtractTextPlugin ('./src/app.css')],
+  plugins: [
+    new MiniCssExtractPlugin ({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: 'app.css',
+    }),
+    new webpack.DefinePlugin ({
+      'process.env.NODE_ENV': JSON.stringify ('production'),
+    }),
+  ],
   module: {
-    loaders: [
+    rules: [
       {
-        test: /.js[x]?$/,
-        loader: 'babel-loader',
+        test: /\.s[ac]ss$/i,
+        use: [
+          // fallback to style-loader in development
+          process.env.NODE_ENV !== 'production'
+            ? 'style-loader'
+            : MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+        ],
+      },
+      {
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        query: {
-          presets: ['es2015', 'react'],
-          plugins: ['transform-object-rest-spread'],
+        loaders: 'babel-loader',
+        options: {
+          presets: ['react', 'stage-0', 'es2015'],
+          plugins: [
+            'transform-class-properties',
+            'transform-decorators-legacy',
+          ],
         },
       },
-      {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract ('style-loader', 'css-loader'),
-      },
-      {
-        test: /\.woff|.woff2|.ttf|.eot|.svg*.*$/,
-        loader: 'file',
-      },
     ],
+  },
+  resolve: {
+    extensions: ['*', '.js', '.jsx', '.scss'],
+  },
+  devServer: {
+    contentBase: './public/',
+    watchContentBase: true,
   },
 };
